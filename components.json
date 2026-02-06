@@ -1,0 +1,413 @@
+"use client";
+
+import { useState, useEffect, useRef } from "react";
+import Image from "next/image";
+import { Send, Loader2, Trash2 } from "lucide-react";
+import { motion, AnimatePresence } from "framer-motion";
+import { toast } from "sonner"; // Assuming sonner is used, or fallback to alert
+import { MD5 } from "crypto-js";
+
+
+// Interface definitions based on demo
+interface Comment {
+coid: number;
+cid: number;
+created: number;
+author: string;
+authorId: string;
+ownerId: string;
+mail: string;
+url: string | null;
+ip: string;
+agent: string;
+text: string;
+type: string;
+status: string;
+parent: string;
+stars: string;
+}
+
+interface CommentTree extends Comment {
+children: CommentTree[];
+}
+
+interface CommentsSectionProps {
+postId: string;
+isAdmin: boolean;
+}
+
+// Helper to get all descendant comments
+function getAllDescendants(comments: Comment[], parentId: string): Comment[] {
+const result: Comment[] = [];
+function findChildren(pid: string) {
+comments.forEach(c => {
+if (c.parent === pid) {
+result.push(c);
+findChildren(c.coid.toString());
+}
+});
+}
+findChildren(parentId);
+return result;
+}
+
+const CommentItem = ({
+comment,
+allComments,
+onReply,
+isAdmin,
+onDelete,
+deletingId
+}: {
+comment: Comment;
+allComments: Comment[];
+onReply: (author: string, parentId: string) => void;
+isAdmin: boolean;
+onDelete: (id: string) => void;
+deletingId: string | null;
+}) => {
+const descendants = getAllDescendants(allComments, comment.coid.toString());
+
+const parseEmoji = (text: string) => {
+const parts: (string | JSX.Element)[] = [];
+let lastIndex = 0;
+const regex = /::furry:(\d+)::/g;
+let match;
+
+while ((match = regex.exec(text)) !== null) {
+if (match.index > lastIndex) {
+parts.push(text.substring(lastIndex, match.index));
+}
+parts.push(
+<img
+key={`emoji-${match.index}`}
+src={`https://blog.tian ie l.top/usr/themes/Mirages/usr/biaoqing/furry/${match[1]}.png`}
+alt={`furry:${match[1]}`}
+className="inline-block w-8 h-8 align-text-bottom mx-1"
+/>
+);
+lastIndex = regex.lastIndex;
+}
+
+if (lastIndex < text.length) {
+parts.push(text.substring(lastIndex));
+}
+
+return parts.length > 0 ? parts : [text];
+};
+
+const getAvatarUrl = (mail: string) => {
+if (!mail) return null;
+if (mail.includes('@qq.com')) {
+const qq = mail.replace('@qq.com', '');
+if (/^\d+$/.test(qq)) {
+return `https://q1.qlogo.cn/g?b=qq&nk=${qq}&s=100`;
+}
+}
+
+// Gravatar fallback for non-QQ emails
+const hash = MD5(mail.trim().toLowerCase()).toString();
+return `https://gravatar.zeruns.com/avatar/${hash}?d=mm`;
+};
+
+const avatarUrl = getAvatarUrl(comment.mail);
+
+return (
+<motion.div
+initial={{ opacity: 0, y: 20 }}
+animate={{ opacity: 1, y: 0 }}
+className="relative group bg-[#0a0a0a] border border-white/5 p-5 rounded-xl"
+>
+{isAdmin && (
+<button
+onClick={() => onDelete(comment.coid.toString())}
+disabled={deletingId === comment.coid.toString()}
+className="absolute top-4 right-4 p-2 text-gray-500 hover:text-red-500 hover:bg-red-500/10 rounded transition-all opacity-0 group-hover:opacity-100 disabled:opacity-50 z-10"
+title="Delete Comment"
+>
+{deletingId === comment.coid.toString() ? <Loader2 size={16} className="animate-spin" /> : <Trash2 size={16} />}
+</button>
+)}
+
+<div className="flex gap-4">
+<div className="shrink-0">
+{avatarUrl ? (
+<img
+src={avatarUrl}
+alt={comment.author}
+className="w-10 h-10 rounded-full border border-green-500/30 object-cover"
+/>
+) : (
+<div className="w-10 h-10 rounded-full bg-green-900/20 text-green-500 flex items-center justify-center font-bold border border-green-500/30">
+{comment.author.charAt(0).toUpperCase()}
+</div>
+)}
+</div>
+<div className="flex-1 min-w-0">
+<div className="flex items-center gap-2 mb-1">
+<span className="text-white font-bold">{comment.author}</span>
+<span className="text-xs text-gray-500 font-mono">
+{new Date(comment.created * 1000).toLocaleString()}
+</span>
+</div>
+
+<div className="text-gray-300 text-sm leading-relaxed break-words whitespace-pre-wrap mb-2">
+{parseEmoji(comment.text)}
+</div>
+
+<div className="flex items-center gap-3">
+<button
+className="text-xs text-green-500/80 hover:text-green-400 transition-colors"
+onClick={() => onReply(comment.author, comment.coid.toString())}
+>
+Reply
+</button>
+{descendants.length > 0 && (
+<span className="text-xs text-muted-foreground">{descendants.length} replies</span>
+)}
+</div>
+</div>
+</div>
+
+{/* Descendants (Flattened logic from demo) */}
+{descendants.length > 0 && (
+<div className="space-y-4 mt-4 pl-10 border-l border-white/5">
+{descendants.map(child => (
+<div key={child.coid} className="relative group bg-[#0c0c0c] border border-white/5 p-4 rounded-lg">
+{isAdmin && (
+<button
+onClick={() => onDelete(child.coid.toString())}
+disabled={deletingId === child.coid.toString()}
+className="absolute top-2 right-2 p-1.5 text-gray-500 hover:text-red-500 hover:bg-red-500/10 rounded transition-all opacity-0 group-hover:opacity-100 disabled:opacity-50 z-10"
+>
+{deletingId === child.coid.toString() ? <Loader2 size={14} className="animate-spin" /> : <Trash2 size={14} />}
+</button>
+)}
+<div className="flex gap-3">
+<div className="shrink-0">
+{getAvatarUrl(child.mail) ? (
+<img
+src={getAvatarUrl(child.mail)!}
+alt={child.author}
+className="w-8 h-8 rounded-full border border-slate-700 object-cover"
+/>
+) : (
+<div className="w-8 h-8 rounded-full bg-slate-800 text-gray-400 flex items-center justify-center font-bold text-xs">
+{child.author.charAt(0).toUpperCase()}
+</div>
+)}
+</div>
+<div className="flex-1 min-w-0">
+<div className="flex items-center gap-2 mb-1">
+<span className="text-gray-200 text-sm font-medium">{child.author}</span>
+<span className="text-xs text-gray-600 font-mono">
+{new Date(child.created * 1000).toLocaleString()}
+</span>
+</div>
+<div className="text-gray-400 text-sm mt-1">
+{parseEmoji(child.text)}
+</div>
+<button
+className="text-xs text-green-500/80 hover:text-green-400 transition-colors mt-2"
+onClick={() => onReply(child.author, child.coid.toString())}
+>
+Reply
+</button>
+</div>
+</div>
+</div>
+))}
+</div>
+)}
+</motion.div>
+);
+};
+
+export default function CommentsSection({ postId, isAdmin }: CommentsSectionProps) {
+const [comments, setComments] = useState<Comment[]>([]);
+const [loading, setLoading] = useState(true);
+const [submitting, setSubmitting] = useState(false);
+
+// Form State
+const [commentForm, setCommentForm] = useState({ author: '', mail: '', text: '', parent: '0' });
+const [replyTo, setReplyTo] = useState<string | null>(null);
+const textareaRef = useRef<HTMLTextAreaElement>(null);
+
+// Deleting State
+const [deletingId, setDeletingId] = useState<string | null>(null);
+
+// Fetch Comments
+const fetchComments = async () => {
+try {
+const res = await fetch(`https://blog.tianiel.top/api/commentsByCid?cid=${postId}`);
+const data = await res.json();
+const list = Array.isArray(data.data) ? data.data : [];
+const mapped = list.map((c: any) => ({
+...c,
+created: Number(c.created)
+}));
+setComments(mapped);
+} catch (error) {
+console.error("Failed to fetch comments", error);
+} finally {
+setLoading(false);
+}
+};
+
+useEffect(() => {
+fetchComments();
+}, [postId]);
+
+
+
+// Reply Handler
+const handleReply = (author: string, parentId: string) => {
+setReplyTo(author);
+setCommentForm(prev => ({ ...prev, parent: parentId }));
+// Scroll to form
+document.getElementById('comment-form')?.scrollIntoView({ behavior: 'smooth' });
+};
+
+// Submit Handler
+const handleSubmit = async (e: React.FormEvent) => {
+e.preventDefault();
+setSubmitting(true);
+try {
+await fetch('https://blog.tianiel.top/api-comment.php', {
+method: 'POST',
+headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+body: new URLSearchParams({
+cid: postId,
+author: commentForm.author,
+mail: commentForm.mail,
+text: commentForm.text,
+parent: commentForm.parent
+})
+});
+
+// Allow success even if API doesn't return standard JSON, just refetch
+setCommentForm({ author: '', mail: '', text: '', parent: '0' });
+setReplyTo(null);
+fetchComments();
+// toast.success('Comment submitted!'); // Use simple alert if toast not available
+alert('Comment submitted successfully!');
+} catch (error) {
+console.error(error);
+alert('Failed to submit comment.');
+} finally {
+setSubmitting(false);
+}
+};
+
+// Delete Handler (Mock or Real if API supports it)
+const handleDelete = async (id: string) => {
+if (!confirm("⚠️ Are you sure? This action might not be supported by the public API yet.")) return;
+setDeletingId(id);
+// Simulate delete or call API if available.
+// Since demo doesn't show delete logic, we just mock it purely client-side or alert.
+// Based on previous code, it was calling a local /api/comments endpoint.
+// Since we switched to external API, and external API might not expose delete...
+// We will just alert for now or try extended API.
+setTimeout(() => {
+alert("Delete functionality requires admin token which is not implemented in this demo.");
+setDeletingId(null);
+}, 1000);
+};
+
+return (
+<section className="mt-16 pt-12 border-t border-white/10">
+<h2 className="text-2xl font-bold text-white mb-8 flex items-center gap-2">
+<span className="text-green-500">#</span> System_Logs / Comments <span className="text-gray-500 text-sm font-normal">({comments.length})</span>
+</h2>
+
+{/* Comment Form */}
+<div id="comment-form" className="mb-12 bg-[#0c0c0c] border border-white/5 p-6 rounded-xl relative">
+<form onSubmit={handleSubmit} className="space-y-4">
+{replyTo && (
+<div className="flex items-center gap-2 text-xs text-green-400 bg-green-900/10 p-2 rounded">
+<span>Replying to:</span>
+<span className="font-bold">{replyTo}</span>
+<button
+type="button"
+onClick={() => {
+setReplyTo(null);
+setCommentForm(prev => ({ ...prev, parent: '0' }));
+}}
+className="ml-auto underline hover:text-white"
+>
+Cancel
+</button>
+</div>
+)}
+
+<div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+<input
+required
+placeholder="Nickname *"
+value={commentForm.author}
+onChange={e => setCommentForm({ ...commentForm, author: e.target.value })}
+className="bg-slate-900/50 border border-slate-800 rounded p-3 text-sm text-white focus:border-green-500 outline-none transition-all focus:bg-slate-900"
+/>
+<input
+type="email"
+required
+placeholder="Email *"
+value={commentForm.mail}
+onChange={e => setCommentForm({ ...commentForm, mail: e.target.value })}
+className="bg-slate-900/50 border border-slate-800 rounded p-3 text-sm text-white focus:border-green-500 outline-none transition-all focus:bg-slate-900"
+/>
+</div>
+
+<div className="relative">
+<textarea
+ref={textareaRef}
+required
+placeholder="Write your log entry..."
+rows={4}
+value={commentForm.text}
+onChange={e => setCommentForm({ ...commentForm, text: e.target.value })}
+className="w-full bg-slate-900/50 border border-slate-800 rounded p-3 text-sm text-white focus:border-green-500 outline-none resize-none transition-all focus:bg-slate-900"
+/>
+
+</div>
+
+<button
+type="submit"
+disabled={submitting}
+className="px-6 py-2 bg-green-600 hover:bg-green-700 text-white rounded font-bold flex items-center gap-2 disabled:opacity-50 transition-colors text-sm ml-auto"
+>
+{submitting ? <Loader2 className="animate-spin" size={16} /> : <Send size={16} />}
+Commit Log
+</button>
+</form>
+</div>
+
+{/* Comment List */}
+{loading ? (
+<div className="flex justify-center py-10">
+<Loader2 className="animate-spin text-green-500" size={32} />
+</div>
+) : comments.length > 0 ? (
+<div className="space-y-6">
+{comments
+.filter(c => c.parent === '0')
+.map(comment => (
+<CommentItem
+key={comment.coid}
+comment={comment}
+allComments={comments}
+onReply={handleReply}
+isAdmin={isAdmin}
+onDelete={handleDelete}
+deletingId={deletingId}
+/>
+))}
+</div>
+) : (
+<p className="text-center text-gray-500 py-10 font-mono border border-dashed border-slate-800 rounded-xl">
+// No logs found. Be the first to execute a comment.
+</p>
+)}
+</section>
+);
+}
