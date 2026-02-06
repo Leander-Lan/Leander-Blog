@@ -1,36 +1,59 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Leander’s Blog
 
-## Getting Started
+一个带有终端美学的个人博客站点，记录设计、开发与生活。  
+风格偏向赛博 / 终端 UI，强调动效、排版与阅读体验。
 
-First, run the development server:
+## 特性
+
+- 终端风格 UI：导航、组件与动效统一为工业科幻风格
+- 文章检索：站内搜索弹层，支持标题与正文关键词
+- Markdown 渲染：GFM + 代码高亮 + 自定义 Scode 提示块
+- 动态背景与页面过渡：增强整体沉浸感
+- 友链 / 关于 / 隐私等独立页面
+
+## 技术栈
+
+- Next.js 16 (App Router)
+- React 19
+- Tailwind CSS
+- Framer Motion
+- Prisma
+- React Markdown + Rehype Highlight
+
+## 本地开发
+
+```bash
+npm install
+npm run dev
+```
+
+打开 http://localhost:3000 查看站点。
+
+## 常用命令
 
 ```bash
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+npm run build
+npm run start
+npm run lint
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+## 目录结构
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+```
+src/
+  app/            路由与页面
+  components/     页面与 UI 组件
+  lib/            数据请求与工具
+public/           静态资源
+```
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+## 数据接口
 
-## Learn More
+当前文章数据来自：
 
-To learn more about Next.js, take a look at the following resources:
+```
+https://blog.tianiel.top/api
+```
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+如需替换为你自己的接口，可在 `src/lib/data.ts` 中修改 API_BASE_URL。
