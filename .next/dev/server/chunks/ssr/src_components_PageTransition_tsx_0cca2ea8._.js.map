@@ -1,0 +1,6 @@
+{
+  "version": 3,
+  "sources": [],
+  "sections": [
+    {"offset": {"line": 4, "column": 0}, "map": {"version":3,"sources":["file:///E:/my-geek-blog/src/components/PageTransition.tsx"],"sourcesContent":["\"use client\";\r\n\r\nimport { motion } from \"framer-motion\";\r\n\r\nexport default function PageTransition({ children }: { children: React.ReactNode }) {\r\n    return (\r\n        <motion.div\r\n            initial={{ opacity: 0, y: 16, scale: 0.98, filter: \"blur(8px)\" }}\n            animate={{ opacity: 1, y: 0, scale: 1, filter: \"blur(0px)\" }}\n            transition={{ duration: 0.7, ease: [0.22, 1, 0.36, 1] }}\n        >\r\n            {children}\r\n        </motion.div>\r\n    );\r\n}\n"],"names":[],"mappings":";;;;;AAEA;AAFA;;;AAIe,SAAS,eAAe,EAAE,QAAQ,EAAiC;IAC9E,qBACI,8OAAC,oMAAM,CAAC,GAAG;QACP,SAAS;YAAE,SAAS;YAAG,GAAG;YAAI,OAAO;YAAM,QAAQ;QAAY;QAC/D,SAAS;YAAE,SAAS;YAAG,GAAG;YAAG,OAAO;YAAG,QAAQ;QAAY;QAC3D,YAAY;YAAE,UAAU;YAAK,MAAM;gBAAC;gBAAM;gBAAG;gBAAM;aAAE;QAAC;kBAErD;;;;;;AAGb"}}]
+}
