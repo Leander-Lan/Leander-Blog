@@ -47,7 +47,7 @@ export default function LinksPage() {
     }, [isModalOpen]);
 
     useEffect(() => {
-        fetch('https://blog.tianiel.top/friends.json')
+        fetch('https://blog.leander.net.cn/friends.json')
             .then(res => res.json())
             .then(data => setLinks(Array.isArray(data) ? data : []));
     }, []);
@@ -56,7 +56,7 @@ export default function LinksPage() {
         e.preventDefault();
         setSubmitting(true);
         try {
-            const res = await fetch('https://blog.tianiel.top/friendlink', {
+            const res = await fetch('https://blog.leander.net.cn/friendlink', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify(formData)
@@ -99,7 +99,7 @@ export default function LinksPage() {
                                 {"// 协议：LINK_ESTABLISHMENT 友链接入"} <br />
                                 {"// 状态：OPEN FOR CONNECTION 开放申请"} <br />
                                 <span className="text-gray-500 mt-2 block">
-                                    站点：<span className="break-all">https://tianiel.top</span> <br/>
+                                    站点：<span className="break-all">https://leander.net.cn</span> <br/>
                                     名称：Leander&apos;s Blog <br/>
                                     站点图标：<span className="break-all">https://q1.qlogo.cn/g?b=qq&nk=615207910&s=640</span> <br/>
                                     要求：至少 5 篇原创文章，需先添加本站友链。<br/>

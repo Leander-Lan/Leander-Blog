@@ -46,7 +46,7 @@ export default function SiteHeader() {
         const fetchPosts = async () => {
             try {
                 setIsSearchLoading(true);
-                const res = await fetch("https://blog.tianiel.top/api/posts?page=1&pageSize=1000");
+                const res = await fetch("https://blog.leander.net.cn/api/posts?page=1&pageSize=1000");
                 const data = await res.json();
                 const raw = Array.isArray((data as { data?: unknown }).data) ? (data as { data: RawPost[] }).data : [];
 

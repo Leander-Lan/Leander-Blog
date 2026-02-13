@@ -53,7 +53,7 @@ public/           静态资源
 当前文章数据来自：
 
 ```
-https://blog.tianiel.top/api
+https://blog.leander.net.cn/api
 ```
 
 如需替换为你自己的接口，可在 `src/lib/data.ts` 中修改 API_BASE_URL。

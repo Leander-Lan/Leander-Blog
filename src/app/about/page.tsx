@@ -152,7 +152,7 @@ export default function AboutPage() {
                                 <section className="pt-8 border-t border-white/10">
                                     <h3 className="text-xl font-bold text-white mb-6">联系方式</h3>
                                     <div className="flex flex-wrap gap-4">
-                                        <a href="mailto:me@tianiel.top" className="flex items-center gap-3 px-6 py-3 bg-[#1F1F1F] border border-white/10 hover:border-ak-cyan text-gray-300 hover:text-ak-cyan transition-all group ak-clip-corner">
+                                        <a href="mailto:me@leander.net.cn" className="flex items-center gap-3 px-6 py-3 bg-[#1F1F1F] border border-white/10 hover:border-ak-cyan text-gray-300 hover:text-ak-cyan transition-all group ak-clip-corner">
                                             <Mail size={18} />
                                             <span className="font-bold tracking-wider">电子邮件</span>
                                         </a>

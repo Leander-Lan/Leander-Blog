@@ -24,7 +24,7 @@ type RawPost = {
     directory?: string | null;
 };
 
-const API_BASE_URL = 'https://blog.tianiel.top/api';
+const API_BASE_URL = 'https://blog.leander.net.cn/api';
 
 const TOTAL_COUNT_CACHE_TAG = 'blog-total-count';
 

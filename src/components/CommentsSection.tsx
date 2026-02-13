@@ -98,7 +98,7 @@ const CommentItem = ({
             parts.push(
                 <Image
                     key={`emoji-${match.index}`}
-                    src={`https://blog.tianiel.top/usr/themes/Mirages/usr/biaoqing/furry/${match[1]}.png`}
+                    src={`https://blog.leander.net.cn/usr/themes/Mirages/usr/biaoqing/furry/${match[1]}.png`}
                     alt={`furry:${match[1]}`}
                     width={32}
                     height={32}
@@ -301,7 +301,7 @@ export default function CommentsSection({ postId, isAdmin }: CommentsSectionProp
     // Fetch Comments
     const fetchComments = useCallback(async () => {
         try {
-            const res = await fetch(`https://blog.tianiel.top/api/commentsByCid?cid=${postId}`);
+            const res = await fetch(`https://blog.leander.net.cn/api/commentsByCid?cid=${postId}`);
             const data = (await res.json()) as CommentsApiResponse;
             const list = Array.isArray(data.data) ? data.data : [];
             const mapped: Comment[] = list.map((c) => ({
@@ -385,7 +385,7 @@ export default function CommentsSection({ postId, isAdmin }: CommentsSectionProp
         e.preventDefault();
         setSubmitting(true);
         try {
-            await fetch('https://blog.tianiel.top/api-comment.php', {
+            await fetch('https://blog.leander.net.cn/api-comment.php', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
                 body: new URLSearchParams({

@@ -48,7 +48,7 @@ export default function PrivacyPage() {
                                     {"// SYSTEM_NOTICE"}
                                 </p>
                                 <p className="text-sm text-gray-300">
-                                    欢迎访问 <strong>tianiel.top</strong>。我们深知隐私对您的重要性，并承诺以透明、安全的方式处理您的数据。
+                                    欢迎访问 <strong>leander.net.cn</strong>。我们深知隐私对您的重要性，并承诺以透明、安全的方式处理您的数据。
                                     本政策详细说明了当您使用本站功能时，我们如何收集和处理您的信息。
                                 </p>
                             </div>
@@ -142,8 +142,8 @@ export default function PrivacyPage() {
                             </h3>
                             <p>
                                 如需删除数据、修改信息或对本隐私政策有任何疑问，请发送邮件至：
-                                <a href="mailto:me@tianiel.top" className="text-ak-cyan no-underline hover:underline ml-1 font-bold">
-                                    me@tianiel.top
+                                <a href="mailto:me@leander.net.cn" className="text-ak-cyan no-underline hover:underline ml-1 font-bold">
+                                    me@leander.net.cn
                                 </a>
                             </p>
 
